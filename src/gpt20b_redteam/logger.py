@@ -9,6 +9,8 @@ from datetime import datetime
 from typing import Dict, Any, List
 from dataclasses import asdict, is_dataclass
 import logging
+from enum import Enum
+from collections.abc import Mapping, Iterable
 
 
 class DataclassJSONEncoder(json.JSONEncoder):
@@ -19,6 +21,8 @@ class DataclassJSONEncoder(json.JSONEncoder):
             return asdict(obj)
         elif hasattr(obj, 'to_dict'):
             return obj.to_dict()
+        elif isinstance(obj, Enum):
+            return obj.value
         elif hasattr(obj, '__dict__'):
             return obj.__dict__
         elif hasattr(obj, 'items'):  # Handle mappingproxy and similar dict-like objects
@@ -26,6 +30,55 @@ class DataclassJSONEncoder(json.JSONEncoder):
         elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
             return list(obj)
         return super().default(obj)
+
+
+def sanitize_for_json(obj: Any, _seen: set = None) -> Any:
+    """Recursively convert objects to JSON-serializable structures, avoiding cycles."""
+    if _seen is None:
+        _seen = set()
+    # Primitives
+    if obj is None or isinstance(obj, (str, int, float, bool)):
+        return obj
+    # Avoid cycles
+    obj_id = id(obj)
+    if obj_id in _seen:
+        return f"<circular:{type(obj).__name__}>"
+    _seen.add(obj_id)
+    # Enums
+    if isinstance(obj, Enum):
+        return obj.value
+    # Dataclasses
+    if is_dataclass(obj):
+        try:
+            return sanitize_for_json(asdict(obj), _seen)
+        except Exception:
+            return repr(obj)
+    # Mapping (includes dict, mappingproxy)
+    if isinstance(obj, Mapping) or hasattr(obj, 'items'):
+        try:
+            return {sanitize_for_json(k, _seen): sanitize_for_json(v, _seen) for k, v in dict(obj).items()}
+        except Exception:
+            return {repr(k): sanitize_for_json(v, _seen) for k, v in list(getattr(obj, 'items', lambda: [])())}
+    # Iterables (list/tuple/set, but not str/bytes handled earlier)
+    if isinstance(obj, Iterable):
+        try:
+            return [sanitize_for_json(x, _seen) for x in list(obj)]
+        except Exception:
+            return repr(obj)
+    # Objects with to_dict
+    if hasattr(obj, 'to_dict') and callable(getattr(obj, 'to_dict')):
+        try:
+            return sanitize_for_json(obj.to_dict(), _seen)
+        except Exception:
+            return repr(obj)
+    # Objects with __dict__
+    if hasattr(obj, '__dict__'):
+        try:
+            return sanitize_for_json(vars(obj), _seen)
+        except Exception:
+            return repr(obj)
+    # Exceptions and other unknowns
+    return repr(obj)
 
 
 class FindingsLogger:
@@ -60,8 +113,9 @@ class FindingsLogger:
         filename = f"combined_results_{timestamp}.json"
         filepath = self.output_dir / "raw_results" / filename
         
+        data = sanitize_for_json(combined_results)
         with open(filepath, 'w') as f:
-            json.dump(combined_results, f, indent=2, cls=DataclassJSONEncoder)
+            json.dump(data, f, indent=2)
         
         return filepath
     
@@ -71,8 +125,9 @@ class FindingsLogger:
         filename = f"{probe_name}_raw_{timestamp}.json"
         filepath = self.output_dir / "raw_results" / filename
         
+        data = sanitize_for_json(results)
         with open(filepath, 'w') as f:
-            json.dump(results, f, indent=2, cls=DataclassJSONEncoder)
+            json.dump(data, f, indent=2)
         
         return filepath
     
