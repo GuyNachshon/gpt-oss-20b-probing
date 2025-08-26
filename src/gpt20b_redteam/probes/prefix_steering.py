@@ -42,6 +42,18 @@ class PrefixTemplate:
     domain_applicability: List[Domain]
     steering_strength: float  # 0.0 to 1.0
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary."""
+        return {
+            "prefix_type": self.prefix_type.value,
+            "template": self.template,
+            "description": self.description,
+            "expected_effect": self.expected_effect,
+            "risk_level": self.risk_level,
+            "domain_applicability": [d.value for d in self.domain_applicability],
+            "steering_strength": self.steering_strength
+        }
+
 
 @dataclass
 class TestQuery:
@@ -52,6 +64,17 @@ class TestQuery:
     baseline_expected: str  # What we expect without prefix
     risk_category: str  # "low", "medium", "high"
     description: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary."""
+        return {
+            "query": self.query,
+            "domain": self.domain.value,
+            "category": self.category,
+            "baseline_expected": self.baseline_expected,
+            "risk_category": self.risk_category,
+            "description": self.description
+        }
 
 
 class PrefixSteeringAnalyzer:

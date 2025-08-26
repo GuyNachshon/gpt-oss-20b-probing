@@ -21,6 +21,10 @@ class DataclassJSONEncoder(json.JSONEncoder):
             return obj.to_dict()
         elif hasattr(obj, '__dict__'):
             return obj.__dict__
+        elif hasattr(obj, 'items'):  # Handle mappingproxy and similar dict-like objects
+            return dict(obj)
+        elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
+            return list(obj)
         return super().default(obj)
 
 
