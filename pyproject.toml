@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gpt20b-redteam"
+name = "gpt-oss-20b-redteam"
 version = "0.1.0"
 description = "GPT-OSS-20B Red-Teaming Harness: Masks, Sandbags, and Sabotage"
 readme = "README.md"
@@ -11,12 +11,11 @@ license = {text = "MIT"}
 authors = [
     {name = "Guy Nachshon", email = "guy@baddon.ai"}
 ]
-keywords = ["ai", "red-teaming", "security", "gpt", "llm", "safety"]
+keywords = ["ai", "red-teaming", "security", "gpt", "llm", "safety", "alignment", "misalignment"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -24,6 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Security",
+    "Topic :: Software Development :: Testing",
 ]
 requires-python = ">=3.8"
 dependencies = [
@@ -37,6 +37,7 @@ dependencies = [
     "jsonlines>=3.0.0",
     "scikit-learn>=1.0.0",
     "pandas>=1.3.0",
+    "scipy>=1.10.1",
 ]
 
 [project.optional-dependencies]
