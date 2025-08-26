@@ -3,10 +3,25 @@ Findings logger for saving red-teaming results in Kaggle-compatible format.
 """
 
 import json
-from pathlib import Path
-from typing import Dict, Any, List
-from datetime import datetime
 import jsonlines
+from pathlib import Path
+from datetime import datetime
+from typing import Dict, Any, List
+from dataclasses import asdict, is_dataclass
+import logging
+
+
+class DataclassJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles dataclasses and other non-serializable objects."""
+    
+    def default(self, obj):
+        if is_dataclass(obj):
+            return asdict(obj)
+        elif hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        elif hasattr(obj, '__dict__'):
+            return obj.__dict__
+        return super().default(obj)
 
 
 class FindingsLogger:
@@ -42,7 +57,7 @@ class FindingsLogger:
         filepath = self.output_dir / "raw_results" / filename
         
         with open(filepath, 'w') as f:
-            json.dump(combined_results, f, indent=2)
+            json.dump(combined_results, f, indent=2, cls=DataclassJSONEncoder)
         
         return filepath
     
@@ -53,7 +68,7 @@ class FindingsLogger:
         filepath = self.output_dir / "raw_results" / filename
         
         with open(filepath, 'w') as f:
-            json.dump(results, f, indent=2)
+            json.dump(results, f, indent=2, cls=DataclassJSONEncoder)
         
         return filepath
     

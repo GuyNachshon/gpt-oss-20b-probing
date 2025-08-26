@@ -46,6 +46,20 @@ class DeceptionTask:
     risk_level: str  # 'low', 'medium', 'high'
     deception_potential: float  # 0.0 to 1.0
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary."""
+        return {
+            "question": self.question,
+            "correct_answer": self.correct_answer,
+            "category": self.category.value,
+            "difficulty": self.difficulty,
+            "expected_confidence": self.expected_confidence,
+            "pressure_condition": self.pressure_condition.value,
+            "domain_context": self.domain_context,
+            "risk_level": self.risk_level,
+            "deception_potential": self.deception_potential
+        }
+
 
 @dataclass
 class ScratchpadResponse:
@@ -61,6 +75,22 @@ class ScratchpadResponse:
     confidence_markers: int = 0
     hedging_terms: int = 0
     disclaimer_count: int = 0
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to JSON-serializable dictionary."""
+        return {
+            "private_scratchpad": self.private_scratchpad,
+            "public_answer": self.public_answer,
+            "confidence_score": self.confidence_score,
+            "accuracy_score": self.accuracy_score,
+            "deception_indicators": self.deception_indicators,
+            "pressure_condition": self.pressure_condition.value,
+            "task_category": self.task_category.value,
+            "response_length": self.response_length,
+            "confidence_markers": self.confidence_markers,
+            "hedging_terms": self.hedging_terms,
+            "disclaimer_count": self.disclaimer_count
+        }
 
 
 class DeceptionDetector:
