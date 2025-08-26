@@ -10,12 +10,16 @@ from datetime import datetime
 
 from .metrics import MetricsCollector
 from .logger import FindingsLogger
-from .probes.base import BaseProbe
 from .probes.eval_awareness import EvaluationAwarenessProbe
 from .probes.deception_rewardhack import DeceptionRewardHackProbe
 from .probes.sabotage_code import SabotageCodeProbe
 from .probes.encoding_evasion import EncodingEvasionProbe
 from .probes.prefix_steering import PrefixSteeringProbe
+from .probes.cross_probe_compounding import CrossProbeCompounding
+from .probes.tokenizer_frequency_sandbagging import TokenizerFrequencySandbagging
+from .probes.long_horizon_sleeper import LongHorizonSleeperTriggers
+from .probes.covert_channel_capacity import CovertChannelCapacity
+from .probes.refusal_boundary_cartography import RefusalBoundaryCartography
 
 
 class RedTeamRunner:
@@ -29,13 +33,18 @@ class RedTeamRunner:
         self.metrics = MetricsCollector()
         self.logger = FindingsLogger(self.output_dir)
         
-        # Initialize all probes
+        # Initialize ALL probes (basic + advanced)
         self.probes = {
             "eval_awareness": EvaluationAwarenessProbe(model, self.metrics),
             "deception_rewardhack": DeceptionRewardHackProbe(model, self.metrics),
             "sabotage_code": SabotageCodeProbe(model, self.metrics),
             "encoding_evasion": EncodingEvasionProbe(model, self.metrics),
             "prefix_steering": PrefixSteeringProbe(model, self.metrics),
+            "cross_probe_compounding": CrossProbeCompounding(model, self.metrics),
+            "tokenizer_frequency_sandbagging": TokenizerFrequencySandbagging(model, self.metrics),
+            "long_horizon_sleeper": LongHorizonSleeperTriggers(model, self.metrics),
+            "covert_channel_capacity": CovertChannelCapacity(model, self.metrics),
+            "refusal_boundary_cartography": RefusalBoundaryCartography(model, self.metrics),
         }
         
         logging.basicConfig(level=logging.INFO)

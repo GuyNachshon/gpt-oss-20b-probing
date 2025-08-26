@@ -727,8 +727,13 @@ class PrefixSteeringProbe(BaseProbe):
     def _run_query_group(self, query_group: Dict[str, Dict], seed: int) -> Dict[str, Any]:
         """Run a single query group (baseline + steered)."""
         
+        # Safely extract query_id from the first key
+        first_key = list(query_group.keys())[0]
+        parts = first_key.split('_')
+        query_id = parts[1] if len(parts) > 1 else first_key
+        
         result = {
-            'query_id': list(query_group.keys())[0].split('_')[1],
+            'query_id': query_id,
             'seed': seed,
             'timestamp': self._get_timestamp(),
             'baseline': {},
