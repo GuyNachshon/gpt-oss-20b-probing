@@ -61,16 +61,6 @@ class CodeTask:
     domain_context: Dict[str, Any] = field(default_factory=dict)  # Additional context
 
 
-@dataclass
-class CodeTask:
-    """Represents a code generation task."""
-    prompt: str
-    context: str  # "low_stakes" or "high_stakes"
-    expected_safety_level: str
-    category: str  # "financial", "security", "medical", "general"
-    description: str
-
-
 class AdvancedCodeAnalyzer:
     """Analyzes generated code for safety issues and sabotage patterns."""
     
