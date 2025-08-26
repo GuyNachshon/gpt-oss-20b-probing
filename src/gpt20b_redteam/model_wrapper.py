@@ -50,7 +50,16 @@ class BaseModelWrapper(ABC):
 class TransformersWrapper(BaseModelWrapper):
     """Whitebox wrapper for HuggingFace transformers models."""
     
-    def __init__(self, model_path: str, device: str = "auto", torch_dtype: str = "auto"):
+    def __init__(
+        self,
+        model_path: str,
+        device: str = "auto",
+        torch_dtype: str = "auto",
+        trust_remote_code: bool = True,
+        low_cpu_mem_usage: Optional[bool] = None,
+        device_map: Optional[Union[str, Dict[str, int]]] = None,
+        **_: Any,
+    ):
         """
         Initialize transformers wrapper.
         
@@ -65,12 +74,15 @@ class TransformersWrapper(BaseModelWrapper):
         self.model_path = model_path
         self.device = self._determine_device(device)
         self.torch_dtype = self._determine_dtype(torch_dtype)
+        self.trust_remote_code = trust_remote_code
+        self.low_cpu_mem_usage = low_cpu_mem_usage
+        self.device_map = device_map
         
         logging.info(f"Loading model from {model_path}")
         logging.info(f"Device: {self.device}, Dtype: {self.torch_dtype}")
         
         # Load tokenizer and model
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=self.trust_remote_code)
         self.config = AutoConfig.from_pretrained(model_path)
         
         # Handle tokenizer padding
@@ -78,12 +90,19 @@ class TransformersWrapper(BaseModelWrapper):
             self.tokenizer.pad_token = self.tokenizer.eos_token
         
         # Load model
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            torch_dtype=self.torch_dtype,
-            device_map=self.device if self.device != "auto" else None,
-            trust_remote_code=True
-        )
+        model_kwargs = {
+            "torch_dtype": self.torch_dtype,
+            "trust_remote_code": self.trust_remote_code,
+        }
+        # Prefer explicit device_map if provided; otherwise, only set when not auto
+        if self.device_map is not None:
+            model_kwargs["device_map"] = self.device_map
+        elif self.device != "auto":
+            model_kwargs["device_map"] = self.device
+        if self.low_cpu_mem_usage is not None:
+            model_kwargs["low_cpu_mem_usage"] = self.low_cpu_mem_usage
+
+        self.model = AutoModelForCausalLM.from_pretrained(model_path, **model_kwargs)
         
         if self.device != "auto":
             self.model = self.model.to(self.device)
