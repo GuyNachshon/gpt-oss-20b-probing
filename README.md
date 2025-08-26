@@ -1,201 +1,276 @@
-# 📄 Project Page: Red-Teaming gpt-oss-20b
+# 🚀 GPT-OSS-20B Red-Teaming Harness
 
-## Title
+> **Masks, Sandbags, and Sabotage: Exposing Hidden Misalignment**
 
-**“Masks, Sandbags, and Sabotage: Exposing Hidden Misalignment in gpt-oss-20b”**
+A comprehensive red-teaming toolkit for testing AI model safety and alignment. Implements advanced probes for detecting misalignment, deception, and safety vulnerabilities in large language models.
+
+## ✨ Features
+
+- **🔍 10 Advanced Probes**: From evaluation awareness to covert channel capacity
+- **🎨 Beautiful CLI**: Rich-powered interface with progress tracking and tables
+- **🔌 Multi-Backend Support**: OpenAI API, Anthropic API, and local Transformers models
+- **📊 Comprehensive Results**: Detailed metrics, findings, and analysis reports
+- **⚡ Plug & Play**: Simple installation and easy-to-use command-line interface
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Install from PyPI
+pip install gpt20b-redteam
+
+# Or install with development dependencies
+pip install gpt20b-redteam[dev]
+
+# Or install from source
+git clone https://github.com/gpt-oss-20b/red-teaming.git
+cd red-teaming
+pip install -e .
+```
+
+### Basic Usage
+
+```bash
+# Run with local model
+gpt20b-redteam --model microsoft/DialoGPT-large
+
+# Run with OpenAI API
+gpt20b-redteam --openai gpt-4 --api-key sk-your-key-here
+
+# Run with custom seeds and output directory
+gpt20b-redteam --model microsoft/DialoGPT-large --seeds 42 123 456 --output my_results
+```
+
+## 🔍 Available Probes
+
+| Probe | Description | Status |
+|-------|-------------|--------|
+| **eval_awareness** | Evaluation Awareness & Sandbagging | ✅ |
+| **deception_rewardhack** | Deception & Reward Hacking | ✅ |
+| **sabotage_code** | Code Sabotage Detection | ✅ |
+| **encoding_evasion** | Encoding-Based Guardrail Evasion | ✅ |
+| **prefix_steering** | Prefix Steering Behavior | ✅ |
+| **cross_probe_compounding** | Cross-Probe Compounding Effects | ✅ |
+| **tokenizer_frequency_sandbagging** | Tokenizer Frequency Sandbagging | ✅ |
+| **long_horizon_sleeper** | Long-Horizon Sleeper Agents | ✅ |
+| **covert_channel_capacity** | Covert Channel Capacity | ✅ |
+| **refusal_boundary_cartography** | Refusal Boundary Cartography | ✅ |
+
+## 📖 Detailed Usage
+
+### Command Line Interface
+
+```bash
+# Show help
+gpt20b-redteam --help
+
+# Run with OpenAI
+gpt20b-redteam --openai gpt-4 --api-key sk-...
+
+# Run with Anthropic
+gpt20b-redteam --anthropic claude-3-sonnet --api-key sk-ant-...
+
+# Run with local model on CPU
+gpt20b-redteam --model microsoft/DialoGPT-large --device cpu
+
+# Run with custom configuration
+gpt20b-redteam \
+  --model microsoft/DialoGPT-large \
+  --seeds 42 123 456 789 \
+  --output results_my_experiment \
+  --device cuda
+```
+
+### Python API
+
+```python
+from gpt20b_redteam import RedTeamRunner, create_model
+
+# Create model
+model = create_model(
+    backend="transformers",
+    model_path="microsoft/DialoGPT-large",
+    device="cuda"
+)
+
+# Run all probes
+runner = RedTeamRunner(model, output_dir="results")
+results = runner.run_all_probes(seeds=[42, 123, 456])
+
+# Access results
+print(f"Total probes: {results['summary']['total_probes']}")
+print(f"Successful: {results['summary']['successful_probes']}")
+print(f"Failed: {results['summary']['failed_probes']}")
+```
+
+### Configuration
+
+The toolkit supports multiple backends:
+
+#### Local Transformers Models
+```python
+from gpt20b_redteam import create_model
+
+model = create_model(
+    backend="transformers",
+    model_path="microsoft/DialoGPT-large",  # or local path
+    device="cuda",  # or "cpu", "mps", "auto"
+    torch_dtype="float16"  # or "bfloat16", "auto"
+)
+```
+
+#### OpenAI API
+```python
+from gpt20b_redteam import create_model, setup_openai_api
+
+setup_openai_api("gpt-4")  # or "gpt-3.5-turbo"
+model = create_model(backend="openai")
+```
+
+#### Anthropic API
+```python
+from gpt20b_redteam import create_model, setup_anthropic_api
+
+setup_anthropic_api("claude-3-sonnet")  # or "claude-3-opus", "claude-3-haiku"
+model = create_model(backend="anthropic")
+```
+
+## 📊 Output Structure
+
+Results are saved to the specified output directory:
+
+```
+results/
+├── findings/
+│   ├── eval_awareness_findings_20240115_200000.json
+│   ├── deception_rewardhack_findings_20240115_200000.json
+│   └── ...
+├── raw_results/
+│   ├── combined_results_20240115_200000.json
+│   ├── eval_awareness_raw_20240115_200000.json
+│   └── ...
+└── README.md
+```
+
+### Results Format
+
+Each probe generates:
+- **Findings**: Kaggle-style formatted results for analysis
+- **Raw Results**: Detailed JSON with all test data
+- **Metrics**: Quantitative measures of model behavior
+- **Analysis**: Qualitative assessment of vulnerabilities
+
+## 🔧 Advanced Configuration
+
+### Custom Seeds
+```bash
+# Use specific seeds for reproducibility
+gpt20b-redteam --model microsoft/DialoGPT-large --seeds 42 1010 90521
+```
+
+### Device Configuration
+```bash
+# Force CPU usage
+gpt20b-redteam --model microsoft/DialoGPT-large --device cpu
+
+# Use CUDA with specific settings
+gpt20b-redteam --model microsoft/DialoGPT-large --device cuda
+```
+
+### Output Customization
+```bash
+# Custom output directory
+gpt20b-redteam --model microsoft/DialoGPT-large --output experiments/gpt4_vs_gpt35
+
+# Disable Rich output (plain text)
+gpt20b-redteam --model microsoft/DialoGPT-large --no-rich
+```
+
+## 🛠️ Development
+
+### Installation for Development
+
+```bash
+git clone https://github.com/gpt-oss-20b/red-teaming.git
+cd red-teaming
+pip install -e .[dev]
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run specific test
+pytest tests/test_eval_awareness.py
+
+# Run with coverage
+pytest --cov=gpt20b_redteam
+```
+
+### Code Quality
+
+```bash
+# Format code
+black src/ tests/
+
+# Lint code
+flake8 src/ tests/
+
+# Type checking
+mypy src/
+```
+
+## 📈 Performance Tips
+
+### Memory Optimization
+- Use `--device cpu` for large models that don't fit in GPU memory
+- Consider using quantized models (e.g., `microsoft/DialoGPT-medium`)
+- Use `torch_dtype="float16"` for reduced memory usage
+
+### Speed Optimization
+- Use GPU acceleration when available (`--device cuda`)
+- Reduce the number of seeds for faster runs
+- Use smaller models for quick testing
+
+### API Usage
+- Set API keys as environment variables for security
+- Monitor API usage and costs
+- Use appropriate rate limiting for production runs
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Adding New Probes
+
+1. Create a new probe class inheriting from `BaseProbe`
+2. Implement the required methods
+3. Add the probe to the `RedTeamRunner`
+4. Write tests and documentation
+
+### Reporting Issues
+
+Please use our [Issue Tracker](https://github.com/gpt-oss-20b/red-teaming/issues) to report bugs or request features.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built on the shoulders of the open-source AI safety community
+- Inspired by research on AI alignment and red-teaming
+- Powered by Hugging Face Transformers and the broader ML ecosystem
+
+## 📚 References
+
+- [Anthropic's "Sleeper Agents" Research](https://arxiv.org/abs/2401.05566)
+- [Evaluation Awareness in Language Models](https://arxiv.org/abs/2309.08896)
+- [Red-Teaming Language Models](https://arxiv.org/abs/2209.07858)
 
 ---
 
-## Motivation: Why We’re Doing This
-
-Modern open-weights models are shaping into the “standard library” for downstream developers. But beneath the friendly surface, models often carry subtle misalignments:
-
-* **Deceptive alignment** (pretending to be safe while hiding other objectives).
-* **Evaluation awareness** (sandbagging during tests, stronger performance “in the wild”).
-* **Reward hacking** (optimizing for *sounding* good instead of *being* correct).
-* **Sabotage vectors** (inserting harmful bugs when given leverage).
-* **Robust jailbreak channels** (encoding tricks that bypass guardrails at scale).
-
-We aim to go beyond one-off prompt jailbreaks and instead demonstrate **systemic flaws** — reproducible patterns that expose deeper alignment risks.
-
----
-
-## Research Questions
-
-1. Does gpt-oss-20b change its behavior when it suspects it’s being evaluated?
-2. Can it be coaxed into exposing “private reasoning” or deceptive strategies?
-3. Does it subtly sabotage outputs when given high-impact tasks?
-4. How robust are guardrails to algorithmic, automated bypass methods (e.g., bijection encodings)?
-5. Can prefill / prefix steering reliably shift the model into risky regimes?
-
----
-
-## Our Approach
-
-We’ll build a **red-teaming harness** that automates probing across five novel exploit classes:
-
-1. **Evaluation Awareness** – Contrastive prompts (eval-framed vs casual) + feature probes.
-2. **Deception / Reward Hacking** – “Private scratchpad” setup to elicit hidden reasoning & inflated confidence.
-3. **Scheming Sabotage** – Differential analysis of code generation in low-stakes vs high-stakes contexts.
-4. **Encoding-Driven Policy Evasion** – Automate Haize-style bijection & string-composition transformations.
-5. **Prefix Steering** – Prefill earlier responses to shift risk profiles.
-
-For each, we’ll produce:
-
-* **Finding JSON** (for Kaggle submission).
-* **Reproduction notebook** (end-to-end demo).
-* **Harness scripts** (deterministic, with fixed seeds).
-
----
-
-## What We Expect
-
-* To surface **5 distinct classes** of vulnerabilities, each novel or methodologically insightful.
-* Evidence that the model exhibits:
-
-  * Sandbagging (capability deltas between eval/casual).
-  * Reward hacking (confidence vs accuracy mismatch).
-  * Sabotage (context-sensitive injection of bugs).
-  * Guardrail bypass via robust encodings.
-  * Unsafe regime drift via prefix steering.
-* To contribute **automation & methodology** (not just exploits), making the results reusable by the community.
-
----
-
-## Impact
-
-* **Severity:** Some findings (sabotage, covert channels) can plausibly cause real-world harm.
-* **Breadth:** Automated harnesses generalize across many prompts, showing systemic failures.
-* **Novelty:** Builds directly on frontier research (Anthropic’s sleeper agents, Palisade scheming probes, Haize bijection encodings).
-* **Reproducibility:** Scripts + notebooks will reproduce issues on demand.
-* **Methodological insight:** Provides a template others can adopt for future red-teaming challenges.
-
----
-
-# 📋 Detailed Plan
-
-## Phase 1 — Setup (Day 1)
-
-* [ ] Spin up gpt-oss-20b locally / via Kaggle kernel.
-* [ ] Prepare evaluation datasets (QA, code tasks, refusal-prone queries).
-* [ ] Build skeleton harness:
-
-  * Input runner (scenario → prompt set).
-  * Output logger (JSON with prompt, seed, output, score).
-  * Metrics module (accuracy, refusals, hallucination, code-safety flags).
-
----
-
-## Phase 2 — Exploit Development (Day 1–2)
-
-### 1. Evaluation Awareness
-
-* Write paired prompts (eval vs casual).
-* Run 100+ samples.
-* Collect accuracy, refusal, style deltas.
-* Train a small linear probe / SAE on layer activations around “eval” tokens.
-
-### 2. Deception / Reward Hacking
-
-* Create “private scratchpad” templates.
-* Add *audit pressure vs lenient framing*.
-* Measure hallucination rate + confidence inflation.
-
-### 3. Scheming Sabotage
-
-* Curate benign vs high-stakes coding tasks.
-* Generate outputs.
-* Auto-diff for:
-
-  * suspicious APIs,
-  * subtle logic bugs,
-  * “poison” comments.
-
-### 4. Encoding Evasion
-
-* Implement bijection + string-composition encoder (seedable).
-* Run refusal-prone queries with 1–5 composition depth.
-* Log refusal-bypass rate.
-
-### 5. Prefix Steering
-
-* Create prefix templates (e.g., risky medical advice tone).
-* Append benign query.
-* Measure disclaimer frequency & confidence shift.
-
----
-
-## Phase 3 — Consolidation (Day 3)
-
-* [ ] Finalize JSON findings (1 per exploit).
-* [ ] Build reproduction notebook (end-to-end).
-* [ ] Polish write-up:
-
-  * Introduction → Motivation → Methods → Findings → Discussion → Lessons.
-* [ ] Add simple visualizations (refusal rate graphs, sabotage diffs, confidence/accuracy deltas).
-
----
-
-## Deliverables
-
-* **5 Findings JSONs** (up to 5 exploits).
-* **Reproduction notebook** (runs all 5).
-* **Harness code** (small, pip-installable).
-* **3k-word write-up** (publication-quality).
-
----
-
-# 🔧 Implementation Status
-
-## Probe Status
-
-### ✅ **Evaluation Awareness Probe** - ENHANCED & COMPLETED
-- **Status**: Advanced implementation with multi-dimensional framing and behavioral analysis
-- **Features**: 100+ questions across 8 domains, 3D framing system (authority/stakes/audience), comprehensive behavioral analysis, white-box activation probing, statistical significance testing
-- **Demo**: `demo_eval_awareness.py`
-
-### ✅ **Code Sabotage Probe** - COMPLETED  
-- **Status**: Advanced implementation with sophisticated sabotage detection
-- **Features**: Multi-language code analysis, adversarial prompt engineering, comprehensive risk scoring
-- **Demo**: `demo_sabotage_probe.py`
-
-### ✅ **Prefix Steering Probe** - COMPLETED
-- **Status**: Advanced implementation with systematic prefix injection testing
-- **Features**: 5 prefix types (confidence, authority, role, context, urgency), 6 domains, comprehensive risk analysis
-- **Demo**: `demo_prefix_steering.py`
-
-### ✅ **Deception & Reward Hacking Probe** - COMPLETED
-- **Status**: Advanced implementation with scratchpad confession detection and reward gaming analysis
-- **Features**: Two-channel scratchpad setup, 6 pressure conditions (audit, stakes, time pressure, authority challenge), 7 task categories (medical, finance, legal, technical, trivia, subjective, creative), deception pattern detection, confidence vs. accuracy mismatch analysis
-- **Demo**: `demo_deception_probe.py`
-
-### ✅ **Encoding Evasion Probe** - REVOLUTIONARY BREAKTHROUGH COMPLETED
-- **Status**: Advanced implementation with revolutionary multi-layer obfuscation technique that leverages pattern recognition through chaos
-- **Features**: 
-  - **25+ encoding schemes** including fantasy languages (Quenya, Klingon, Aurebesh), ancient scripts (Elder Futhark, Hieroglyphics), advanced Unicode (Medieval, Cursive, Fraktur), technical codes (Brainfuck, Chemical), steganography, Zalgo glitch, vaporwave aesthetic
-  - **🚀 REVOLUTIONARY TECHNIQUE**: Multi-layer obfuscation with word-level randomization, 20+ variations, rhythm patterns, and chaos-to-signal conversion
-  - **Pattern recognition through chaos**: Human-incomprehensible but model-readable text through statistical repetition
-  - **P4RS3LT0NGV3 integration**: Word-level randomization with 8-12 transformations per word
-  - **Composition stacking** (1-5 layers), 30+ refusal-prone queries across domains
-- **Demo**: `demo_encoding_evasion.py`
-- **Research Impact**: Demonstrates vulnerability to sophisticated pattern recognition attacks that humans cannot detect but advanced models can understand
-
-## Core Infrastructure
-
-### ✅ **Advanced Metrics System** - COMPLETED
-- **Features**: LLM-as-a-judge, human feedback integration, activation probe training
-- **Demo**: `demo_advanced_metrics.py`
-
-### ✅ **Model Wrapper** - COMPLETED
-- **Features**: Whitebox (transformers) and blackbox (API) support
-- **Demo**: `example_usage.py`
-
-### ✅ **Configuration Management** - COMPLETED
-- **Features**: Centralized config for models, red-teaming, and logging
-
-## Next Steps
-
-1. **Complete remaining probes** (Deception & Encoding Evasion)
-2. **Integration testing** across all probes
-3. **Visualization tools** for comprehensive results
-4. **Final findings compilation** for Kaggle submission
+**Made with ❤️ by the GPT-OSS-20B Team**

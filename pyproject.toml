@@ -5,31 +5,63 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gpt20b-redteam"
 version = "0.1.0"
-description = "Red-teaming harness for gpt-oss-20b misalignment research"
-authors = [{name = "Research Team"}]
+description = "GPT-OSS-20B Red-Teaming Harness: Masks, Sandbags, and Sabotage"
 readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Guy Nachshon", email = "guy@baddon.ai"}
+]
+keywords = ["ai", "red-teaming", "security", "gpt", "llm", "safety"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security",
+]
 requires-python = ">=3.8"
 dependencies = [
     "torch>=2.0.0",
     "transformers>=4.30.0",
+    "openai>=1.0.0",
+    "anthropic>=0.7.0",
+    "rich>=13.0.0",
     "numpy>=1.21.0",
-    "pandas>=1.3.0",
-    "matplotlib>=3.5.0",
-    "seaborn>=0.11.0",
-    "scikit-learn>=1.0.0",
     "tqdm>=4.64.0",
     "jsonlines>=3.0.0",
-    "rich>=14.1.0",
-    "openai>=1.101.0",
-    "sentence-transformers>=3.2.1",
+    "scikit-learn>=1.0.0",
+    "pandas>=1.3.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
     "black>=22.0.0",
-    "flake8>=4.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
 ]
+
+[project.scripts]
+gpt20b-redteam = "gpt20b_redteam.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/GuyNachshon/gpt-oss-20b-probing"
+Repository = "https://github.com/GuyNachshon/gpt-oss-20b-probing"
+Documentation = "https://github.com/GuyNachshon/gpt-oss-20b-probing#readme"
+Issues = "https://github.com/GuyNachshon/gpt-oss-20b-probing/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gpt20b_redteam*"]
 
 [tool.black]
 line-length = 88
@@ -38,10 +70,3 @@ target-version = ['py38']
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["gpt20b_redteam*"]
