@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gpt-oss-20b-redteam"
-version = "0.1.0"
+version = "0.1.1"
 description = "GPT-OSS-20B Red-Teaming Harness: Masks, Sandbags, and Sabotage"
 readme = "README.md"
 license = {text = "MIT"}

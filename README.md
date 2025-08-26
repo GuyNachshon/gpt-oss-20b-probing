@@ -16,21 +16,59 @@ A comprehensive red-teaming toolkit for testing AI model safety and alignment. I
 
 ### Installation
 
+#### Option 1: Docker (Recommended)
+```bash
+# Pull from Docker Hub (easiest)
+docker pull guynachshon/gpt-oss-20b-redteam:latest
+docker run --rm --gpus all guynachshon/gpt-oss-20b-redteam:latest --help
+
+# Or build locally
+./build_docker.sh
+
+# Or manually
+docker build -t gpt-oss-20b-redteam:latest .
+docker run --rm --gpus all gpt-oss-20b-redteam:latest --help
+```
+
+#### Option 2: PyPI Package
 ```bash
 # Install from PyPI
-pip install gpt20b-redteam
+pip install gpt-oss-20b-redteam
 
 # Or install with development dependencies
-pip install gpt20b-redteam[dev]
+pip install gpt-oss-20b-redteam[dev]
+```
 
-# Or install from source
-git clone https://github.com/gpt-oss-20b/red-teaming.git
-cd red-teaming
+#### Option 3: From Source
+```bash
+# Clone and install from source
+git clone https://github.com/GuyNachshon/gpt-oss-20b-probing.git
+cd gpt-oss-20b-probing
 pip install -e .
 ```
 
 ### Basic Usage
 
+#### Docker Usage
+```bash
+# Run with GPT-OSS-20B model (GPU)
+docker run --rm --gpus all \
+  -v $(pwd)/results:/app/results \
+  guynachshon/gpt-oss-20b-redteam:latest \
+  --model openai/gpt-oss-20b
+
+# Run with OpenAI API
+docker run --rm \
+  -e OPENAI_API_KEY="sk-your-key-here" \
+  -v $(pwd)/results:/app/results \
+  guynachshon/gpt-oss-20b-redteam:latest \
+  --openai gpt-4
+
+# Run with Docker Compose
+docker-compose run gpt20b-redteam-gpt-oss
+```
+
+#### Direct Usage
 ```bash
 # Run with local model
 gpt20b-redteam --model microsoft/DialoGPT-large
@@ -187,13 +225,78 @@ gpt20b-redteam --model microsoft/DialoGPT-large --output experiments/gpt4_vs_gpt
 gpt20b-redteam --model microsoft/DialoGPT-large --no-rich
 ```
 
+## 🐳 Docker
+
+### Quick Docker Setup
+
+```bash
+# Pull from Docker Hub (recommended)
+docker pull guynachshon/gpt-oss-20b-redteam:latest
+
+# Or build locally
+./build_docker.sh
+
+# Or manually
+docker build -t gpt-oss-20b-redteam:latest .
+```
+
+### Publish to Docker Hub
+
+```bash
+# Login to Docker Hub first
+docker login
+
+# Then publish
+./publish_docker.sh
+
+# Or with custom version
+VERSION=v1.0.0 ./publish_docker.sh
+```
+
+### Docker Usage Examples
+
+```bash
+# Run with GPT-OSS-20B (requires GPU)
+docker run --rm --gpus all \
+  -v $(pwd)/results:/app/results \
+  gpt-oss-20b-redteam:latest \
+  --model openai/gpt-oss-20b
+
+# Run with specific GPU
+docker run --rm --gpus '"device=1"' \
+  -v $(pwd)/results:/app/results \
+  gpt-oss-20b-redteam:latest \
+  --model openai/gpt-oss-20b
+
+# Run with OpenAI API
+docker run --rm \
+  -e OPENAI_API_KEY="sk-your-key-here" \
+  -v $(pwd)/results:/app/results \
+  gpt-oss-20b-redteam:latest \
+  --openai gpt-4
+
+# Run with Docker Compose
+docker-compose run gpt20b-redteam-gpt-oss
+```
+
+### Docker Compose Services
+
+The `docker-compose.yml` provides several pre-configured services:
+
+- `gpt20b-redteam` - Basic service with help
+- `gpt20b-redteam-gpt-oss` - Runs with GPT-OSS-20B model
+- `gpt20b-redteam-openai` - Runs with OpenAI API
+- `gpt20b-redteam-anthropic` - Runs with Anthropic API
+
+For detailed Docker instructions, see [DOCKER.md](DOCKER.md).
+
 ## 🛠️ Development
 
 ### Installation for Development
 
 ```bash
-git clone https://github.com/gpt-oss-20b/red-teaming.git
-cd red-teaming
+git clone https://github.com/GuyNachshon/gpt-oss-20b-probing.git
+cd gpt-oss-20b-probing
 pip install -e .[dev]
 ```
 

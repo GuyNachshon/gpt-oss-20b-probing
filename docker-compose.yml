@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  gpt20b-redteam:
+    build: .
+    image: gpt-oss-20b-redteam:latest
+    container_name: gpt20b-redteam
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    volumes:
+      # Mount results directory for persistent output
+      - ./results:/app/results
+      # Mount cache directory for model downloads
+      - ~/.cache/huggingface:/root/.cache/huggingface
+      # Mount config directory for custom configurations
+      - ./config:/app/config
+    ports:
+      # Optional: expose port for web interface if needed later
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Default command (can be overridden)
+    command: ["--help"]
+
+  # Service for running with specific models
+  gpt20b-redteam-gpt-oss:
+    build: .
+    image: gpt-oss-20b-redteam:latest
+    container_name: gpt20b-redteam-gpt-oss
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    volumes:
+      - ./results:/app/results
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: ["--model", "openai/gpt-oss-20b", "--output", "results_gpt_oss_20b"]
+
+  # Service for running with OpenAI API
+  gpt20b-redteam-openai:
+    build: .
+    image: gpt-oss-20b-redteam:latest
+    container_name: gpt20b-redteam-openai
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./results:/app/results
+    command: ["--openai", "gpt-4", "--output", "results_openai"]
+
+  # Service for running with Anthropic API
+  gpt20b-redteam-anthropic:
+    build: .
+    image: gpt-oss-20b-redteam:latest
+    container_name: gpt20b-redteam-anthropic
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./results:/app/results
+    command: ["--anthropic", "claude-3-sonnet", "--output", "results_anthropic"]
