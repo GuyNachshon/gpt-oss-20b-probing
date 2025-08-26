@@ -140,16 +140,23 @@ class TransformersWrapper(BaseModelWrapper):
     
     def generate(self, prompt: str, **kwargs) -> str:
         """Generate text response."""
-        # Set default generation parameters
-        default_params = {
-            "max_length": 200,
-            "do_sample": False,
-            "temperature": 0.7,
-            "top_p": 0.9,
+        # Set default generation parameters; only include sampling args when sampling
+        do_sample = bool(kwargs.get("do_sample", False))
+        max_new_tokens = kwargs.pop("max_new_tokens", kwargs.pop("max_length", 200))
+
+        gen_params = {
+            "max_new_tokens": max_new_tokens,
+            "do_sample": do_sample,
             "pad_token_id": self.tokenizer.eos_token_id,
-            "eos_token_id": self.tokenizer.eos_token_id
+            "eos_token_id": self.tokenizer.eos_token_id,
         }
-        default_params.update(kwargs)
+
+        if do_sample:
+            gen_params["temperature"] = kwargs.pop("temperature", 0.7)
+            gen_params["top_p"] = kwargs.pop("top_p", 0.9)
+
+        # Merge any other provided kwargs (e.g., top_k, repetition_penalty, etc.)
+        gen_params.update(kwargs)
         
         # Tokenize input
         inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
@@ -157,7 +164,7 @@ class TransformersWrapper(BaseModelWrapper):
         
         # Generate
         with torch.no_grad():
-            outputs = self.model.generate(**inputs, **default_params)
+            outputs = self.model.generate(**inputs, **gen_params)
         
         # Decode response
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
