@@ -269,7 +269,7 @@ Examples:
     )
     
     parser.add_argument(
-        "--output", "-o",
+        "--output", "-O",
         default="results",
         help="Output directory for results (default: results)"
     )

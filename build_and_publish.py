@@ -9,19 +9,26 @@ import subprocess
 import shutil
 from pathlib import Path
 
-def run_command(cmd, check=True):
-    """Run a command and return the result."""
-    print(f"🔄 Running: {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+def run_command(command, check=True):
+    """Run a shell command and return the result."""
+    print(f"🔄 Running: {command}")
+    
+    # Use uv run python for Python scripts
+    if command.startswith("python "):
+        command = command.replace("python ", "uv run python ", 1)
+    
+    result = subprocess.run(
+        command,
+        shell=True,
+        capture_output=True,
+        text=True,
+        check=check
+    )
     
     if result.stdout:
         print(f"📤 STDOUT: {result.stdout}")
     if result.stderr:
         print(f"📤 STDERR: {result.stderr}")
-    
-    if check and result.returncode != 0:
-        print(f"❌ Command failed with return code {result.returncode}")
-        sys.exit(1)
     
     return result
 
@@ -43,9 +50,7 @@ def clean_build():
 def build_package():
     """Build the package."""
     print("🔨 Building package...")
-    
-    # Build wheel and source distribution
-    run_command("python -m build")
+    run_command("uv build")
     
     # Check what was built
     dist_files = list(Path("dist").glob("*"))
@@ -79,7 +84,7 @@ def test_install():
     
     # Test install in a temporary environment
     try:
-        run_command(f"pip install {wheel_path} --force-reinstall --no-deps", check=False)
+        run_command(f"uv pip install {wheel_path} --force-reinstall --no-deps", check=False)
         print("✅ Package installed successfully (without dependencies)")
     except Exception as e:
         print(f"⚠️  Package installation had issues: {e}")
@@ -88,7 +93,7 @@ def test_install():
     
     # Test the CLI (if package was installed)
     try:
-        result = run_command("gpt20b-redteam --help", check=False)
+        result = run_command("uv run gpt20b-redteam --help", check=False)
         if result.returncode == 0:
             print("✅ CLI works correctly!")
         else:
