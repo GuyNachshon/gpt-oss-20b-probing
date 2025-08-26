@@ -663,7 +663,10 @@ class PrefixSteeringProbe(BaseProbe):
             # Group prompts by query (baseline + steered)
             query_groups = {}
             for prompt in prompts:
-                query_id = prompt['id'].split('_')[1]  # Extract query number
+                pid = prompt['id']
+                parts = pid.split('_')
+                # Expect formats: baseline_{i} and steered_{i}
+                query_id = parts[1] if len(parts) > 1 else pid
                 if query_id not in query_groups:
                     query_groups[query_id] = {}
                 

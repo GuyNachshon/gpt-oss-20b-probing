@@ -92,3 +92,17 @@ class BaseProbe(ABC):
             "cached_results": len(self.results_cache),
             "last_run": getattr(self, 'last_run_timestamp', None)
         }
+
+    # Shared helper for querying the underlying model
+    def _query_model(self, prompt: str, **kwargs) -> str:
+        """Query the wrapped model safely and return a string response."""
+        try:
+            response = self.model.generate(prompt, **kwargs)
+            # Some backends might return tuples or objects; coerce to string
+            if isinstance(response, tuple):
+                # Join non-empty string-like parts if possible
+                parts = [str(p) for p in response if p is not None]
+                return " ".join(parts)
+            return str(response)
+        except Exception as e:
+            return f"Error: {e}"

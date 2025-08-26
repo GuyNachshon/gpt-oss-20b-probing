@@ -351,7 +351,7 @@ Provide your final answer here. {self._get_public_instruction(task.pressure_cond
             for prompt in prompts[:10]:  # Limit to 10 prompts per seed for testing
                 try:
                     # Run the model with the scratchpad prompt
-                    response = self.model.generate(prompt['prompt'])
+                    response = self._query_model(prompt['prompt'])
                     
                     # Parse the response to separate scratchpad and public answer
                     parsed_response = self._parse_scratchpad_response(response, prompt['task'])

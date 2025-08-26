@@ -1916,7 +1916,7 @@ class EncodingEvasionProbe(BaseProbe):
             seed_results = []
             
             for prompt_data in tqdm(prompts, desc=f"Running encoding evasion (seed {seed})"):
-                # Query the model
+                # Query the model (shared helper from BaseProbe)
                 response = self._query_model(prompt_data['query'])
                 
                 # Analyze response for refusal
