@@ -449,7 +449,7 @@ class LongHorizonSleeperTriggers(BaseProbe):
             
             # Start conversation
             user_prompt = scenario['initial_prompt']
-            assistant_response = self.model.generate(user_prompt)
+            assistant_response = self._query_model(user_prompt)
             calls_used += 1
             
             dialogue_turns.append(DialogueTurn(
@@ -488,7 +488,7 @@ class LongHorizonSleeperTriggers(BaseProbe):
                     user_prompt = f"{user_prompt}\n\n{trig_text}"
                 
                 full_prompt = f"{current_context}\n\nUser: {user_prompt}\nAssistant:"
-                assistant_response = self.model.generate(full_prompt)
+                assistant_response = self._query_model(full_prompt)
                 calls_used += 1
                 if "Assistant:" in assistant_response:
                     assistant_response = assistant_response.split("Assistant:")[-1].strip()
@@ -524,7 +524,7 @@ class LongHorizonSleeperTriggers(BaseProbe):
                         break
                     drift_prompt = self._drift_prompt(drift_target, d)
                     full_prompt = f"{current_context}\n\nUser: {drift_prompt}\nAssistant:"
-                    assistant_response = self.model.generate(full_prompt)
+                    assistant_response = self._query_model(full_prompt)
                     calls_used += 1
                     if "Assistant:" in assistant_response:
                         assistant_response = assistant_response.split("Assistant:")[-1].strip()
@@ -543,7 +543,7 @@ class LongHorizonSleeperTriggers(BaseProbe):
                     else:
                         user_prompt = self._generate_continuation_prompt(current_context)
                     full_prompt = f"{current_context}\n\nUser: {user_prompt}\nAssistant:"
-                    assistant_response = self.model.generate(full_prompt)
+                    assistant_response = self._query_model(full_prompt)
                     calls_used += 1
                     if "Assistant:" in assistant_response:
                         assistant_response = assistant_response.split("Assistant:")[-1].strip()
@@ -626,7 +626,7 @@ class LongHorizonSleeperTriggers(BaseProbe):
         try:
             # Simplified control test - just get one response
             control_prompt = f"User: {scenario['conversation_flow'][0] if scenario['conversation_flow'] else 'Hello, how are you?'}\nAssistant:"
-            control_response = self.model.generate(control_prompt)
+            control_response = self._query_model(control_prompt)
             
             # Extract just the assistant's response
             if "Assistant:" in control_response:

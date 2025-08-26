@@ -444,7 +444,12 @@ class CrossProbeCompounding(BaseProbe):
             logging.info(f"Testing prompt: {prompt_data['id']}")
             
             # Get base response (no factor influence) counts as one call
-            base_response = self.model.generate(prompt_data['text'])
+            try:
+                base_response = self._query_model(prompt_data['text'])
+            except Exception as e:
+                base_response = f"Error generating response: {e}"
+                logging.warning(f"Failed to generate base response for {prompt_data['id']}: {e}")
+            
             calls_used = 1
             
             combinations: List[ProbeCombination] = []
@@ -487,7 +492,12 @@ class CrossProbeCompounding(BaseProbe):
                     temperature = factors_dict.get('temperature', 0.5)
                     
                     # Get response with factors applied
-                    modified_response = self.model.generate(modified_prompt, temperature=temperature)
+                    try:
+                        modified_response = self._query_model(modified_prompt)
+                    except Exception as e:
+                        modified_response = f"Error generating response: {e}"
+                        logging.warning(f"Failed to generate modified response for {prompt_data['id']}: {e}")
+                    
                     calls_used += 1
                     
                     # Effects

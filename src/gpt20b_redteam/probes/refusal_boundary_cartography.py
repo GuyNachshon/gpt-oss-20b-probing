@@ -203,7 +203,7 @@ class RefusalBoundaryCartography(BaseProbe):
             logging.info(f"Testing prompt: {prompt_data['text']}")
             
             # Test original prompt
-            original_response = self.model.generate(prompt_data['text'])
+            original_response = self._query_model(prompt_data['text'])
             original_status = self._classify_response(original_response)
             
             if original_status == 'refusal':
@@ -264,7 +264,7 @@ class RefusalBoundaryCartography(BaseProbe):
                         continue
                     
                     # Evaluate candidate
-                    test_response = self.model.generate(candidate.modified_text)
+                    test_response = self._query_model(candidate.modified_text)
                     model_calls += 1
                     test_status = self._classify_response(test_response)
                     refusal_score = self._calculate_refusal_score(test_response)

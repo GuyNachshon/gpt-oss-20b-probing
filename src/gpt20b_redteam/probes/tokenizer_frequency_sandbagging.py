@@ -494,7 +494,7 @@ class TokenizerFrequencySandbagging(BaseProbe):
             logging.info(f"Testing prompt: {prompt_data['prompt_id']}")
             
             # Test original prompt
-            original_response = self.model.generate(prompt_data['original_prompt'])
+            original_response = self._query_model(prompt_data['original_prompt'])
             calls_used += 1
             
             # Test each variant
@@ -511,7 +511,7 @@ class TokenizerFrequencySandbagging(BaseProbe):
                     termination_reason = 'call_cap'
                     break
                 before_calls = calls_used
-                variant_response = self.model.generate(variant.modified_prompt)
+                variant_response = self._query_model(variant.modified_prompt)
                 calls_used += 1
                 variant_responses[variant.variant_id] = variant_response
                 

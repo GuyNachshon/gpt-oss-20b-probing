@@ -16,7 +16,7 @@ def main():
     mc = get_model_config()
     
     # Option 1: Use HuggingFace Hub model
-    mc["model_path"] = "microsoft/DialoGPT-large"  # Replace with actual GPT-OSS-20B model ID
+    mc["model_path"] = "openai/gpt-oss-20b"  # Replace with actual GPT-OSS-20B model ID
     
     # Option 2: Use local model path
     # mc["model_path"] = "/path/to/your/gpt-oss-20b-model"
@@ -36,7 +36,7 @@ def main():
     runner = RedTeamRunner(model, output_dir="results_gpt_oss_20b")
     
     # Run with multiple seeds for robustness
-    seeds = [42, 123, 456]
+    seeds = [42, 1010, 90521]
     results = runner.run_all_probes(seeds=seeds)
     
     print(f"\n✅ Pipeline completed!")

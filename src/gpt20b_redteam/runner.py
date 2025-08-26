@@ -53,7 +53,7 @@ class RedTeamRunner:
     def run_all_probes(self, seeds: List[int] = None) -> Dict[str, Any]:
         """Run all probes and collect findings."""
         if seeds is None:
-            seeds = [42, 123, 456]
+            seeds = [42, 1010, 90521]
         
         self.logger_instance.info(f"Starting red-teaming run with {len(seeds)} seeds")
         

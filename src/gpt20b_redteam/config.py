@@ -41,7 +41,7 @@ MODEL_CONFIG = {
 # Red-teaming configuration
 REDTEAM_CONFIG = {
     "output_dir": "results",
-    "seeds": [42, 123, 456],  # Random seeds for reproducibility
+    "seeds": [42, 1010, 90521],  # Random seeds for reproducibility
     "max_samples_per_probe": 100,  # Limit samples for faster testing
     
     # Probe-specific settings
